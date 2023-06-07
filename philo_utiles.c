@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:36:19 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/07 16:34:37 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/07 20:54:56 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,11 @@ int	arg_error(char **av)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	while (av[i])
 	{
-		if (erro(av[i]) || ft_atoi(av[i]) <= 0 || ft_atoi(av[i]) > 2147483647){
+		if (erro(av[i]) || ft_atoi(av[i]) <= 0 || ft_atoi(av[i]) > 2147483647)
+		{
 			printf("error!!\n");
 			return (1);
 		}
