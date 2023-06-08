@@ -6,7 +6,7 @@
 #    By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/31 16:55:52 by aziyani           #+#    #+#              #
-#    Updated: 2023/06/07 17:22:23 by aziyani          ###   ########.fr        #
+#    Updated: 2023/06/08 17:50:05 by aziyani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,11 @@ NAME = philo
 
 CC = gcc
 
-# CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS = -Wall -Wextra -Werror
 
 RM = rm -f
 
-SRC = philo.c philo_utiles.c
+SRC = philo.c checks.c routine.c
 
 all : $(NAME)
 
