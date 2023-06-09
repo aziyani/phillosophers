@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:36:59 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/08 18:11:33 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/09 21:08:30 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,16 @@ void	ft_full(char **av, t_philo *philos, pthread_mutex_t	*l_d, int *is_d)
 		philos[i].die_time = ft_atoi(av[2]);
 		philos[i].eat_time = ft_atoi(av[3]);
 		philos[i].slp_time = ft_atoi(av[4]);
+		if (av[5])
+			philos[i].arg_eats = ft_atoi(av[5]);
 		pthread_mutex_init(&(forks[i]), NULL);
 		philos[i].forks = forks;
 		pthread_mutex_init(&(philos[i].l_eat), NULL);
+		pthread_mutex_init(&(philos[i].n_eat), NULL);
 		philos[i].l_dead = l_d;
 		philos[i].is_dead = is_d;
 		i++;
 	}
-	i = 0;
 }
 
 // ============================================================================
@@ -60,12 +62,74 @@ int	ft_creat_(t_philo *philos, long start_time)
 	return (0);
 }
 
+int	get_total_eats(t_philo *philos)
+{
+	int	i;
+	int	total;
+
+	i = 0;
+	total = 0;
+	while (i < philos->ph_number)
+	{
+		pthread_mutex_lock(&(philos[i].n_eat));
+		total += philos[i].number_of_eat;
+		pthread_mutex_unlock(&(philos[i].n_eat));
+		i++;
+	}
+	return (total);
+}
+
+// ============================================================================
+
+void	ft_check_eats(t_philo *philos, int *done)
+{
+	int	total_eats;
+
+	total_eats = get_total_eats(philos);
+	if (total_eats >= (philos->ph_number * philos->arg_eats))
+	{
+		pthread_mutex_lock((philos->l_dead));
+		*(philos->is_dead) = 1;
+		pthread_mutex_unlock((philos->l_dead));
+		*done = 0;
+	}
+	usleep(10);
+}
+
+// ============================================================================
+
+void	ft_check_dead(t_philo *phi, int *done)
+{
+	phi->done = 1;
+	phi->i = 0;
+	phi->i = 0;
+	while ((phi->i < phi[0].ph_number) && *done)
+	{
+		pthread_mutex_lock(&(phi[phi->i].l_eat));
+		if ((get_time() - phi[phi->i].last_eat) >= phi[phi->i].die_time)
+		{
+			pthread_mutex_unlock(&(phi[phi->i].l_eat));
+			pthread_mutex_lock((phi[phi->i].l_dead));
+			*(phi[phi->i].is_dead) = 1;
+			pthread_mutex_unlock((phi[phi->i].l_dead));
+			printf("%ld %d is dead\n", (get_time() - phi[phi->i].start_time),
+				(phi[phi->i].id + 1));
+			*done = 0;
+		}
+		else
+			pthread_mutex_unlock(&(phi[phi->i].l_eat));
+		phi->i++;
+	}
+	usleep(10);
+}
+
 // ============================================================================
 
 int	ft_creat(t_philo *philos)
 {
 	int		i;
 	long	start_time;
+	int		done;
 
 	start_time = get_time();
 	i = 0;
@@ -84,39 +148,15 @@ int	ft_creat(t_philo *philos)
 	}
 	usleep(100);
 	ft_creat_(philos, start_time);
-	ft_check_dead(philos);
-	return (0);
-}
-
-// ============================================================================
-
-void	ft_check_dead(t_philo *phi)
-{
-	phi->done = 1;
-	phi->i = 0;
-	while (phi->done)
+	done = 1;
+	while (done)
 	{
-		phi->i = 0;
-		while ((phi->i < phi[0].ph_number) && phi->done)
-		{
-			pthread_mutex_lock(&(phi[phi->i].l_eat));
-			if ((get_time() - phi[phi->i].last_eat) >= phi[phi->i].die_time)
-			{
-				pthread_mutex_unlock(&(phi[phi->i].l_eat));
-				pthread_mutex_lock((phi[phi->i].l_dead));
-				*(phi[phi->i].is_dead) = 1;
-				pthread_mutex_unlock((phi[phi->i].l_dead));
-				printf("%ld %d is dead\n", (get_time() - phi[phi->i].start_time),
-					(phi[phi->i].id + 1));
-				phi->done = 0;
-			}
-			else
-				pthread_mutex_unlock(&(phi[phi->i].l_eat));
-			phi->i++;
-		}
-		usleep(10);
+		if (philos->arg_eats != 0)
+			ft_check_eats(philos, &done);
+		ft_check_dead(philos, &done);
+		usleep(100);
 	}
-	return ;
+	return (0);
 }
 
 // ============================================================================

@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 16:59:50 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/08 18:15:51 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/09 20:44:46 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,16 @@ typedef struct s_philo
 	pthread_t		thread;
 	int				id;
 	pthread_mutex_t	*forks;
+	int				number_of_eat;
 	int				ph_number;
 	long			last_eat;
 	long			die_time;
 	long			eat_time;
 	long			slp_time;
 	long			start_time;
+	long			arg_eats;
 	pthread_mutex_t	l_eat;
+	pthread_mutex_t	n_eat;
 	pthread_mutex_t	*l_dead;
 	int				*is_dead;
 	int				i;
@@ -46,7 +49,7 @@ long	get_time(void);
 
 void	ft_do(t_philo *philo, int left_fork, int right_fork);
 void	my_print(t_philo *philo, char *s);
-void	ft_check_dead(t_philo *philos);
+void	ft_check_dead(t_philo *phi, int *done);
 void	*routine(void *arg);
 
 #endif

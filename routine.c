@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 17:43:39 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/08 18:12:11 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/09 20:40:56 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ void	ft_do(t_philo *philo, int left_fork, int right_fork)
 	pthread_mutex_lock(&(philo->forks[right_fork]));
 	my_print(philo, "has taken a fork");
 	my_print(philo, "is eating");
+	pthread_mutex_lock(&(philo->n_eat));
+	philo->number_of_eat++;
+	pthread_mutex_unlock(&(philo->n_eat));
 	pthread_mutex_lock(&philo->l_eat);
 	philo->last_eat = get_time();
 	pthread_mutex_unlock(&philo->l_eat);
