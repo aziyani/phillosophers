@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/31 16:59:50 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/09 20:44:46 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/10 11:55:11 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,9 @@ int		erro(char *av);
 long	get_time(void);
 
 void	ft_do(t_philo *philo, int left_fork, int right_fork);
-void	my_print(t_philo *philo, char *s);
+void	ft_check_eats(t_philo *philos, int *done);
 void	ft_check_dead(t_philo *phi, int *done);
+void	my_print(t_philo *philo, char *s);
 void	*routine(void *arg);
 
 #endif

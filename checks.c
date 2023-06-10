@@ -5,112 +5,74 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/05 15:36:19 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/09 09:36:11 by aziyani          ###   ########.fr       */
+/*   Created: 2023/06/10 11:45:51 by aziyani           #+#    #+#             */
+/*   Updated: 2023/06/10 11:46:45 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// ===========================================================================
+// ============================================================================
 
-int	ft_atoi(char *str)
-{
-	int	sign;
-	int	res;
-	int	i;
-
-	res = 0;
-	sign = 1;
-	i = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-')
-		sign = -1;
-	if (str[i] == '+' || str[i] == '-')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		res = res * 10 + str[i] - '0';
-		i++;
-	}
-	return (res * sign);
-}
-
-// ===========================================================================
-
-int	erro(char *av)
+int	get_total_eats(t_philo *philos)
 {
 	int	i;
-	int	flag;
+	int	total;
 
 	i = 0;
-	flag = 0;
-	while (av[i])
+	total = 0;
+	while (i < philos->ph_number)
 	{
-		if (av[i] == '+' || av[i] == '-')
-		{
-			if (flag == 1 || i > 0)
-				return (1);
-			flag = 1;
-		}
-		else if (!(av[i] >= '0' && av[i] <= '9'))
-			return (1);
+		pthread_mutex_lock(&(philos[i].n_eat));
+		total += philos[i].number_of_eat;
+		pthread_mutex_unlock(&(philos[i].n_eat));
 		i++;
 	}
-	return (0);
+	return (total);
 }
 
-// ===========================================================================
+// ============================================================================
 
-int	arg_error(char **av)
+void	ft_check_eats(t_philo *philos, int *done)
 {
-	int	i;
+	int	total_eats;
 
-	i = 1;
-	while (av[i])
+	total_eats = get_total_eats(philos);
+	if (total_eats >= (philos->ph_number * philos->arg_eats))
 	{
-		if (erro(av[i]) || ft_atoi(av[i]) <= 0 || ft_atoi(av[i]) > 2147483647)
-		{
-			printf("error!!\n");
-			return (1);
-		}
-		i++;
+		pthread_mutex_lock((philos->l_dead));
+		*(philos->is_dead) = 1;
+		pthread_mutex_unlock((philos->l_dead));
+		*done = 0;
 	}
-	return (0);
+	usleep(10);
 }
 
-// ===========================================================================
+// ============================================================================
 
-long	get_time(void)
+void	ft_check_dead(t_philo *phi, int *done)
 {
-	struct timeval	tp;
-	long int		msec;
-
-	gettimeofday(&tp, NULL);
-	msec = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-	return (msec);
-}
-
-// ===========================================================================
-
-int	ft_sleep(int time, t_philo *philo)
-{
-	long	start;
-
-	start = get_time();
-	while ((get_time() - start) < time)
+	phi->done = 1;
+	phi->i = 0;
+	phi->i = 0;
+	while ((phi->i < phi[0].ph_number) && *done)
 	{
-		pthread_mutex_lock(philo->l_dead);
-		if ((*(philo->is_dead)) == 1)
+		pthread_mutex_lock(&(phi[phi->i].l_eat));
+		if ((get_time() - phi[phi->i].last_eat) >= phi[phi->i].die_time)
 		{
-			pthread_mutex_unlock(philo->l_dead);
-			return (0);
+			pthread_mutex_unlock(&(phi[phi->i].l_eat));
+			pthread_mutex_lock((phi[phi->i].l_dead));
+			*(phi[phi->i].is_dead) = 1;
+			pthread_mutex_unlock((phi[phi->i].l_dead));
+			printf("%ld %d is dead\n", (get_time() - phi[phi->i].start_time),
+				(phi[phi->i].id + 1));
+			*done = 0;
 		}
-		pthread_mutex_unlock(philo->l_dead);
-		usleep(100);
+		else
+			pthread_mutex_unlock(&(phi[phi->i].l_eat));
+		phi->i++;
 	}
-	return (0);
+	usleep(10);
 }
 
-// ===========================================================================
+// ============================================================================
