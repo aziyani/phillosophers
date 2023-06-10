@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/08 17:43:39 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/09 20:40:56 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/10 14:54:27 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,17 @@ void	my_print(t_philo *philo, char *s)
 
 // ============================================================================
 
-void	ft_do(t_philo *philo, int left_fork, int right_fork)
+int	ft_do(t_philo *philo, int left_fork, int right_fork)
 {
 	pthread_mutex_unlock(philo->l_dead);
 	my_print(philo, "is thinking");
 	pthread_mutex_lock(&(philo->forks[left_fork]));
 	my_print(philo, "has taken a fork");
+	if (philo->ph_number == 1)
+	{
+		pthread_mutex_unlock(&(philo->forks[left_fork]));
+		return (1);
+	}
 	pthread_mutex_lock(&(philo->forks[right_fork]));
 	my_print(philo, "has taken a fork");
 	my_print(philo, "is eating");
@@ -47,6 +52,7 @@ void	ft_do(t_philo *philo, int left_fork, int right_fork)
 	pthread_mutex_unlock(&(philo->forks[right_fork]));
 	my_print(philo, "is sleeping");
 	ft_sleep(philo->slp_time, philo);
+	return (0);
 }
 
 // ============================================================================
@@ -70,7 +76,8 @@ void	*routine(void *arg)
 			pthread_mutex_unlock(philo->l_dead);
 			return (NULL);
 		}
-		ft_do(philo, left_fork, right_fork);
+		if (ft_do(philo, left_fork, right_fork))
+			return (NULL);
 	}
 	return (NULL);
 }

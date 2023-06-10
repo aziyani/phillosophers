@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:36:59 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/10 11:56:16 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/10 15:10:37 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	ft_full(char **av, t_philo *philos, pthread_mutex_t	*l_d, int *is_d)
 	int				i;
 	pthread_mutex_t	*forks;
 
-	forks = malloc(sizeof(pthread_mutex_t) * (ft_atoi(av[1]) + 1));
+	forks = malloc(sizeof(pthread_mutex_t) * (ft_atoi(av[1])));
 	i = 0;
 	while (i < ft_atoi(av[1]))
 	{
@@ -27,6 +27,7 @@ void	ft_full(char **av, t_philo *philos, pthread_mutex_t	*l_d, int *is_d)
 		philos[i].die_time = ft_atoi(av[2]);
 		philos[i].eat_time = ft_atoi(av[3]);
 		philos[i].slp_time = ft_atoi(av[4]);
+		philos[i].arg_eats = 0;
 		if (av[5])
 			philos[i].arg_eats = ft_atoi(av[5]);
 		pthread_mutex_init(&(forks[i]), NULL);
