@@ -21,7 +21,7 @@ SRC = philo.c errors.c checks.c routine.c
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME) 
-test
+
 $(NAME) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
