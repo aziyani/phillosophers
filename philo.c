@@ -6,7 +6,7 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 15:36:59 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/10 15:10:37 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/15 19:25:53 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	ft_creat_(t_philo *philos, long start_time)
 			printf("bad creation!!\n");
 			return (1);
 		}
-		usleep(100);
+		usleep(philos->ph_number * 2);
 		i += 2;
 	}
 	return (0);
@@ -98,7 +98,7 @@ int	ft_creat(t_philo *philos)
 			printf("bad creation!!\n");
 			return (1);
 		}
-		usleep(100);
+		usleep(philos->ph_number * 2);
 		i += 2;
 	}
 	usleep(100);
@@ -125,12 +125,14 @@ int	main(int ac, char **av)
 		philos = malloc((ft_atoi(av[1]) + 1) * sizeof(t_philo));
 		pthread_mutex_init(&l_dead, NULL);
 		ft_full(av, philos, &l_dead, &is_dead);
-		ft_creat(philos);
+		if (ft_creat(philos))
+			return (ft_destroy(philos), 1);
 		while (i < philos->ph_number)
 		{
-			pthread_join(philos[i].thread, NULL);
+			pthread_detach(philos[i].thread);
 			i++;
 		}
+		ft_destroy(philos);
 	}
 	return (0);
 }

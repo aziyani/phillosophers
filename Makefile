@@ -6,26 +6,30 @@
 #    By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/31 16:55:52 by aziyani           #+#    #+#              #
-#    Updated: 2023/06/10 12:44:21 by aziyani          ###   ########.fr        #
+#    Updated: 2023/06/15 19:27:15 by aziyani          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-CC = gcc
+CC = cc
 
-CFLAGS = -Wall -Wextra -Werror 
-
-RM = rm -f
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
 
 SRC = philo.c errors.c checks.c routine.c
 
-all : $(NAME)
-$(NAME) : $(SRC)
-	$(CC)  $(CFLAGS) $(SRC) -o $(NAME)
+OBJ = $(SRC:.c=.o)
+
+all : $(NAME) 
+
+$(NAME) : $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
+%.o : %.c philo.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
-	$(RM)
+	$(RM) $(OBJ)
 fclean : clean
 	$(RM) $(NAME)
 

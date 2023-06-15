@@ -6,11 +6,30 @@
 /*   By: aziyani <aziyani@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 11:45:51 by aziyani           #+#    #+#             */
-/*   Updated: 2023/06/10 11:46:45 by aziyani          ###   ########.fr       */
+/*   Updated: 2023/06/15 18:39:45 by aziyani          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+// ============================================================================
+
+void	ft_destroy(t_philo *philos)
+{
+	int	i;
+
+	i = 0;
+	while (i < philos->ph_number)
+	{
+		pthread_mutex_destroy(&philos->forks[i]);
+		i++;
+	}
+	pthread_mutex_destroy(philos->l_dead);
+	pthread_mutex_destroy(&philos->l_eat);
+	pthread_mutex_destroy(&philos->n_eat);
+	free(philos[0].forks);
+	free(philos);
+}
 
 // ============================================================================
 
@@ -64,7 +83,7 @@ void	ft_check_dead(t_philo *phi, int *done)
 			pthread_mutex_lock((phi[phi->i].l_dead));
 			*(phi[phi->i].is_dead) = 1;
 			pthread_mutex_unlock((phi[phi->i].l_dead));
-			printf("%ld %d is dead\n", (get_time() - phi[phi->i].start_time),
+			printf("%ld %d died\n", (get_time() - phi[phi->i].start_time),
 				(phi[phi->i].id + 1));
 			*done = 0;
 		}
