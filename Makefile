@@ -14,14 +14,14 @@ NAME = philo
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -pthread -fsanitize=thread -g
 
 SRC = philo.c errors.c checks.c routine.c
 
 OBJ = $(SRC:.c=.o)
 
 all : $(NAME) 
-
+test
 $(NAME) : $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
